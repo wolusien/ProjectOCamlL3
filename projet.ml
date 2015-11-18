@@ -86,7 +86,7 @@ let list_to_rules list =
            in (aux1 l tab 0)
 ;;
 
-(*Définition de la fonction parse*)
+(*Definition de la fonction parse*)
 let parse fd =
   let list = read fd
   in ((get_dim list),
