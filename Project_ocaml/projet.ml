@@ -95,52 +95,58 @@ let print state =
   |Val(a) -> print_char a
 ;;
 
-let show_generation (tab:generation) = 
+let show_generation tab = 
   for i=0 to ((Array.length tab)-1)
   do
-    for j=0 to ((Array.length tab)-1)
-    do print_string "|";print tab.(i).(j);print_string "|";
+    print_string "\n+";
+    for k=0 to ((Array.length tab)-2)
+    do print_string "--";
     done;
-    print_string "\n";
-  done
+    print_string "-+\n";
+    for j=0 to ((Array.length tab)-1)
+    do print_string "|";print tab.(i).(j);
+    done;print_string "|";
+  done;
+  print_string "\n+";
+  for k=0 to ((Array.length tab)-2)
+  do print_string "--";
+  done;
+  print_string "-+\n";
 ;;
 
-let right_cell (tab:generation) i j =
+let right_cell tab i j =
   if((j+1)<Array.length tab.(0)) then tab.(i).(j+1)
   else tab.(i).(0)
 ;;
 
-let left_cell (tab:generation) i j = 
+let left_cell tab i j = 
   if((j-1)>=0) then tab.(i).(j-1)
   else tab.(i).((Array.length tab.(0))-1)
 ;;
 
-let north_cell (tab:generation) i j = 
+let north_cell tab i j = 
   if((i-1)>=0) then tab.(i-1).(j)
   else tab.((Array.length tab)-1).(j)
 ;;
 
-let south_cell (tab:generation) i j = 
+let south_cell tab i j = 
   if((i+1)<(Array.length tab)) then tab.(i+1).(j)
   else tab.(0).(j)
 ;;
 
-let voisin (tab:generation) l c = 
+let voisin tab l c = 
   let cell = tab.(l).(c)(*cellule courante*)
   in (((north_cell tab l c),(right_cell tab l c),(south_cell tab l c),(left_cell tab l c),cell):rule)
 ;;
 
 (*Test if an automaton contains a rule*)
-let contains_rule rule =
-  let result = false and index = 0
-  in while (index < (Array.length tab)) 
-    do if((tab.(index))=rule) then result=true
-      else index=index+1
-    done; result
+let contains_rule tab rule =
+  let list = Array.to_list tab
+     in List.mem rule list
 ;;
   
 
-let next_generation (tab:generation) (rules:automaton) = 
+let next_generation tab rules  = 
   let newtab = Array.init (Array.length tab) (fun x -> (Array.init (Array.length tab) (fun x -> Val('D'))))
   in for i=0 to ((Array.length tab)-1)
     do for j=0 to ((Array.length tab)-1)
@@ -152,5 +158,9 @@ let next_generation (tab:generation) (rules:automaton) =
 ;;
 
 let (dim,gen,auto)= parse (open_in "testgen");;
+
+contains_rule auto (Val('A'),Val('A'),Val('A'),Val('D'),Val('d'));;
+
+show_generation gen;;
 
 show_generation (next_generation gen auto);;
