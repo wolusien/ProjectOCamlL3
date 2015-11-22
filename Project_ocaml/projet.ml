@@ -114,6 +114,7 @@ let show_generation tab =
   print_string "-+\n";
 ;;
 
+(*Getters for neighbors of a state*)
 let right_cell tab i j =
   if((j+1)<Array.length tab.(0)) then tab.(i).(j+1)
   else tab.(i).(0)
@@ -134,6 +135,7 @@ let south_cell tab i j =
   else tab.(0).(j)
 ;;
 
+(*Neighbors state to rule*)
 let voisin tab l c = 
   let cell = tab.(l).(c)(*cellule courante*)
   in (((north_cell tab l c),(right_cell tab l c),(south_cell tab l c),(left_cell tab l c),cell):rule)
