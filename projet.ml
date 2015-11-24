@@ -10,7 +10,7 @@ type 'a option = None | Some of 'a;;
 
 exception IncorrectFile;;
 
-(*Read file and register it on a list*)
+(*Read file and store it on a list*)
 let read file_desc = 
   let rec add list =
        let result = 
@@ -34,7 +34,7 @@ let get_string_line list str =
       else aux q s (a+1)
   in aux list str 0;;
 
-(*Recupere les lignes entre debut et fin*)
+(*Get the lines between debut and fin*)
 let get_lines list debut fin =
   let rec aux l1 d f l2 a =
     if (a>(d-1) && (a+1)<f) then 
@@ -43,7 +43,7 @@ let get_lines list debut fin =
   in let l=aux list debut fin [] debut
      in List.rev l;;
 
-(*convertion d'un string en  state list*)
+(*Convert string to  state list*)
 let string_to_state_list string =
   let rec aux s n l1 =
     if(n<(String.length s)) then 
@@ -53,25 +53,25 @@ let string_to_state_list string =
   in aux string 0 []
 ;;
 
-(*Translate string list to generation*)
+(*Convert string list to generation*)
 let list_to_generation list = 
-(*Récupération de la génération Zero*)   
+(*Get generation Zero*)   
   let deb = (get_string_line list "GenerationZero")
   and fin = List.length list
   in let l = get_lines list deb (fin+1)
      in let tab = (Array.init (List.length l) (fun x -> Array.init (List.length l) (fun x -> Val('A'))))
-        in let rec aux1 l2 t n = (*creation d'une ligne de state du tableau generation*)
+        in let rec aux1 l2 t n = (*create a state array *)
              match l2 with 
              |[] -> t
              |h::q -> t.(n) <- h; aux1 q t (n+1)
-           in let aux2 l3 t1 = (*Remplissage de tab avec la génération Zero*) 
+           in let aux2 l3 t1 = (*Fil the state array array with the generation Zero*) 
                 for i=0 to ((List.length l3)-1) 
                 do t1.(i) <- aux1 (string_to_state_list (List.nth l3 i)) (Array.init (List.length l3) (fun x -> Val('A'))) 0
                 done;t1
-              in ((aux2 l tab):generation)(*Retourne tab (tab:generation)*)
+              in ((aux2 l tab):generation)(*Return a generation*)
 ;;
 
-(*Translate list of string to automaton*) 
+(*Convert list of string to automaton*) 
 let list_to_rules list = 
   let rec aux1 l2 t n = 
     match l2 with 
@@ -137,7 +137,7 @@ let south_cell tab i j =
   else tab.(0).(j)
 ;;
 
-(*Neighbors state to rule*)
+(*Convert Neighbors states and current state to a rule*)
 let voisin tab l c = 
   let cell = tab.(l).(c)(*cellule courante*)
   in (((north_cell tab l c),(right_cell tab l c),(south_cell tab l c),(left_cell tab l c),cell):rule)
