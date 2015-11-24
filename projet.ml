@@ -8,6 +8,8 @@ type automaton = rule array ;;
 
 type 'a option = None | Some of 'a;;
 
+exception IncorrectFile;;
+
 (*Read file and register it on a list*)
 let read file_desc = 
   let rec add list =
@@ -27,7 +29,7 @@ let get_dim list = int_of_string (List.hd list);;
 let get_string_line list str =
   let rec aux l s a = 
     match l with 
-    |[] -> failwith("list vide")
+    |[] -> raise IncorrectFile
     |h::q -> if(h=s) then (a+1)
       else aux q s (a+1)
   in aux list str 0;;
