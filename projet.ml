@@ -10,6 +10,8 @@ type 'a option = None | Some of 'a;;
 
 exception IncorrectFile;;
 
+exception SyntaxFile;;
+
 (*Read file and store it on a list*)
 let read file_desc = 
   let rec add list =
@@ -48,7 +50,8 @@ let string_to_state_list string =
   let rec aux s n l1 =
     if(n<(String.length s)) then 
       if((String.get s n)=='A') then aux s (n+1) (l1@[Val('A')])
-      else aux s (n+1) (l1@[Val('D')])
+      else if((String.get s n)=='D') then aux s (n+1) (l1@[Val('D')])
+      else raise SyntaxFile
     else l1
   in aux string 0 []
 ;;
@@ -174,3 +177,60 @@ type formule = Vrai | Faux
                |Neg of formule 
                |Et of formule * formule 
                |Ou of formule * formule;;
+
+(*Get the number of the case given by line l and column c*)
+let index taille (l,c) = (l)*taille + (c+1);;
+
+(*Get the index i and j which represent the line and the column of the case number*)
+let indexation taille num = ((num/taille), ((num mod taille)-1));;
+
+(*Getters for neighbors of a couple (i,j)*)
+let right_index dim i j =
+  if((j+1)<dim) then (i, (j+1))
+  else (i,0)
+;;
+
+let left_index dim i j = 
+  if((j-1)>=0) then (i,(j-1))
+  else (i,(dim-1))
+;;
+
+let north_index dim i j = 
+  if((i-1)>=0) then ((i-1),j)
+  else ((dim-1),j)
+;;
+
+let south_index dim i j = 
+  if((i+1)<dim) then ((i+1),j)
+  else (0,j)
+;;
+
+let pos state num = 
+  match state with 
+  |Val(x) -> if(x='A') then num
+    else if(x='D') then -num
+    else raise SyntaxFile
+;;
+
+pos (Val('D'):state) 12;;
+
+let traduce (auto:automaton) dim l c = 
+  let list = ref [] in 
+  for z=0 to ((Array.length auto)-1)  
+  do
+      let (nord,est,sud,ouest,cell)=(auto.(z))
+      in  let f= pos nord (index dim (north_index dim l c))
+      and g= pos est (index dim (right_index dim l c))
+      and h= pos sud (index dim (south_index dim l c))
+      and i= pos ouest (index dim (left_index dim l c))
+      and j= pos cell (index dim (l,c))
+          in list:=(f,g,h,i,j)::!list
+  done;!list;;
+
+
+traduce auto dim 0 0;; 
+
+
+index 4 2 3;;
+
+indexation 4 15;;
