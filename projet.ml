@@ -168,3 +168,9 @@ contains_rule auto (Val('A'),Val('A'),Val('A'),Val('D'),Val('d'));;
 show_generation gen;;
 
 show_generation (next_generation gen auto);;
+
+type formule = Vrai | Faux
+               |Var of string
+               |Neg of formule 
+               |Et of formule * formule 
+               |Ou of formule * formule;;
