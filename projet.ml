@@ -184,7 +184,7 @@ let index taille (l,c) = (l)*taille + (c+1);;
 (*Get the index i and j which represent the line and the column of the case number*)
 let indexation taille num = ((num/taille), ((num mod taille)-1));;
 
-(*Getters for neighbors of a couple (i,j)*)
+(*Getters for index neighbors of a couple (i,j)*)
 let right_index dim i j =
   if((j+1)<dim) then (i, (j+1))
   else (i,0)
@@ -205,6 +205,7 @@ let south_index dim i j =
   else (0,j)
 ;;
 
+(*Translate the state on num*)
 let pos state num = 
   match state with 
   |Val(x) -> if(x='A') then num
@@ -214,6 +215,7 @@ let pos state num =
 
 pos (Val('D'):state) 12;;
 
+(*Translate automaton for a couple (l,c) to (5-uplets int)list  *)
 let traduce (auto:automaton) dim l c = 
   let list = ref [] in 
   for z=0 to ((Array.length auto)-1)  
@@ -225,12 +227,33 @@ let traduce (auto:automaton) dim l c =
       and i= pos ouest (index dim (left_index dim l c))
       and j= pos cell (index dim (l,c))
           in list:=(f,g,h,i,j)::!list
-  done;!list;;
+  done;
+  List.rev(!list)
+;;
 
 
 traduce auto dim 0 0;; 
 
+(*Translate automaton for a couple (l,c) to (formula)list  *)
+let auto_to_formula (auto:automaton) dim l c =
+  let var_to_lit num =
+    if(num<0) then Neg(Var("x"^string_of_int((-1)*num)))
+    else Var("x"^string_of_int(num))
+  in let ind_to_formula (a,b,c,d,e) = 
+       let i= var_to_lit a
+       and j= var_to_lit b
+       and k= var_to_lit c
+       and l= var_to_lit d
+       and m= var_to_lit e
+       in Neg(Et(i,(Et(Et(j,k),Et(l,m))))) 
+     in let l = traduce auto dim l c
+        in let rec aux l1 l2 =
+          match l1 with
+          |[] -> l2
+          |h::q -> aux q ((ind_to_formula h)::l2)
+           in List.rev(aux l [])
+;;
 
-index 4 2 3;;
+auto_to_formula auto dim 0 0;;
 
-indexation 4 15;;
+
