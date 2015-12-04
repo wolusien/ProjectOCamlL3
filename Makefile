@@ -1,4 +1,3 @@
-
 automaton: automaton.cmo program.cmo showGrid.cmo
 	ocamlc -o automaton automaton.cmo program.cmo showGrid.cmo
 

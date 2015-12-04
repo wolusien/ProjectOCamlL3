@@ -1,5 +1,3 @@
-
-
 type state = Val of char
 
 type generation = state array array
