@@ -12,7 +12,7 @@ automaton.cmi: automaton.mli
 program.cmo: program.ml automaton.cmi
 	ocamlc -c program.ml
 
-automaton.cmo: showGrid.ml automaton.cmi program.cmi
+showGrid.cmo: showGrid.ml automaton.cmi program.cmi
 	ocamlc -c showGrid.ml
 
 clean:

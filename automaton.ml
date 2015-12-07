@@ -93,3 +93,77 @@ let list_to_rules list =
 let print state = 
   match state with 
   |Val(a) -> print_char a
+;;
+
+
+(*Getters for neighbors of a state*)
+let right_cell tab i j =
+  if((j+1)<Array.length tab.(0)) then tab.(i).(j+1)
+  else tab.(i).(0)
+;;
+
+let left_cell tab i j = 
+  if((j-1)>=0) then tab.(i).(j-1)
+  else tab.(i).((Array.length tab.(0))-1)
+;;
+
+let north_cell tab i j = 
+  if((i-1)>=0) then tab.(i-1).(j)
+  else tab.((Array.length tab)-1).(j)
+;;
+
+let south_cell tab i j = 
+  if((i+1)<(Array.length tab)) then tab.(i+1).(j)
+  else tab.(0).(j)
+;;
+
+(*Convert Neighbors states and current state to a rule*)
+let voisin tab l c = 
+  let cell = tab.(l).(c)(*cellule courante*)
+  in (((north_cell tab l c),(right_cell tab l c),(south_cell tab l c),(left_cell tab l c),cell):rule)
+;;
+
+(*Test if an automaton contains a rule*)
+let contains_rule tab rule =
+  let list = Array.to_list tab
+     in List.mem rule list
+;;
+  
+
+
+(*Get the number of the case given by line l and column c*)
+let index taille (l,c) = (l)*taille + (c+1);;
+
+(*Get the index i and j which represent the line and the column of the case number*)
+let indexation taille num = ((num/taille), ((num mod taille)-1));;
+
+(*Getters for index neighbors of a couple (i,j)*)
+let right_index dim i j =
+  if((j+1)<dim) then (i, (j+1))
+  else (i,0)
+;;
+
+let left_index dim i j = 
+  if((j-1)>=0) then (i,(j-1))
+  else (i,(dim-1))
+;;
+
+let north_index dim i j = 
+  if((i-1)>=0) then ((i-1),j)
+  else ((dim-1),j)
+;;
+
+let south_index dim i j = 
+  if((i+1)<dim) then ((i+1),j)
+  else (0,j)
+;;
+
+(*Translate the state on num*)
+let pos state num = 
+  match state with 
+  |Val(x) -> if(x='A') then num
+    else if(x='D') then -num
+    else raise SyntaxFile
+;;
+
+
