@@ -13,7 +13,7 @@ exception IncorrectFile
 exception SyntaxFile
 
 (*Read file and store it on a list*)
-val read : in_channel -> string list = <fun>
+val reado : in_channel -> string list = <fun>
 
 (*Return the dimension of the grid*)
 val get_dim : string list -> int = <fun>
