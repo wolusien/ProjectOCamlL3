@@ -263,32 +263,19 @@ let tradaux (auto:automaton) dim l c =
         in aux2 au []
 ;;
 
-(*Create list disjunction between l1_form elements and l2_form elements*)
-let rec disjunction l1_form l2_form =
-  let rec aux f list list2 = 
-    match list with
-    |[] -> list2
-    |h::q -> aux f q ((Ou(f,h))::list2)
-  in let rec aux2 l1 l2 l3 = 
-       match l1 with 
-       |[] -> l3
-       |h::q -> aux2 q l2 (aux h l2 l3)
-     in aux2 l1_form l2_form []
+(*Add list of disjunction l2_form to l1_form*)
+let rec fus l1_form l2_form =
+  match l1_form with
+  |[] -> l2_form
+  |h::q -> fus q (h::l2_form)
 ;;
 
-(*let auto1 = (tradaux (extract_rules auto 'D') 2 0 0);;
-
-let auto2 = (tradaux (complementaire auto) 2 0 0);;
-
-disjunction auto1 auto2;;*)
-
-
-(*Create a list of disjunction*)
+(*Create a list of disjunction prob ici*)
 let stables auto dim =
   let l = ref []
   in for i=0 to (dim-1)
     do for j=0 to (dim-1)
-      do l := ((disjunction (tradaux (complementaire auto) dim i j) (tradaux (extract_rules auto 'D') dim i j))::(!l))
+      do l := ((fus (tradaux (complementaire auto) dim i j) (tradaux (extract_rules auto 'D') dim i j))::(!l))
       done;
     done; (List.flatten (!l))
 ;;
@@ -379,6 +366,7 @@ let negate_sol s =
 
 (*negate_sol "1 2 3 4 0";;*)
 
+(*Update the number of clauses in entree.dimacs*)
 let modif_nb_clauses deb_dimacs =
     let rec aux s n =
       if(n>0) then 
@@ -407,10 +395,13 @@ let modif_dimacs list dim =
 let modif_entree () = 
    let list = readf (open_in "entree.dimacs")
    in let deb_dimacs = modif_nb_clauses (List.hd list)
-   in let l = readf (open_in "soluce.txt")
-      in let sol = (List.nth l 1)^" 0\n"
-         in let list_finale = (deb_dimacs::(List.tl list))@[(negate_sol sol)] 
-            in modif_dimacs list_finale dim
+      in let l = readf (open_in "soluce.txt")
+         in let sol = (List.nth l 1)
+            in let negsol = [((negate_sol sol)^" 0")]
+               in let l1 = List.tl list
+                  in let l2 = (deb_dimacs::l1)
+                     in let list_finale = l2@negsol 
+                        in modif_dimacs list_finale dim
 ;;
 
 let show_stables () =
@@ -426,12 +417,12 @@ let show_stables () =
         end 
       else
         begin
-          print_string "Il n'existe pas de génération stable pour votre automate !\n";
+          print_string "Il n'existe pas de génération stable pour votre automate !\n\n";
           restart "Non"
         end 
     else 
       begin 
-        print_string "Fin de recherche de génération stable.\n";
+        print_string "<Fin de recherche de génération stable>\n";
         exit(0)
       end 
   in let aux a = 
