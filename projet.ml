@@ -379,13 +379,38 @@ let negate_sol s =
 
 (*negate_sol "1 2 3 4 0";;*)
 
+let modif_nb_clauses deb_dimacs =
+    let rec aux s n =
+      if(n>0) then 
+        if((String.get s n)=' ') then n
+        else aux s (n-1)
+      else n
+    in let firstspace = aux deb_dimacs ((String.length deb_dimacs)-1) 
+       in let nbclauses = (int_of_string (String.sub deb_dimacs (firstspace +1) ((String.length deb_dimacs)-firstspace-1)))+1
+          in let str = (String.sub deb_dimacs 0 (firstspace+1))
+             in str^(string_of_int nbclauses)      
+;;
+
+
+(*Modif the dimacs file*)
+let modif_dimacs list dim =
+  let n = List.length list 
+  and fd = open_out("entree.dimacs")
+  in let rec aux file_desc l =
+       match l with 
+       |[] -> close_out file_desc
+       |h::q -> output_string file_desc (h^"\n"); aux file_desc q 
+     in aux fd list
+;;
+
 (*Update entree.dimacs by adding the rule get by the solution of minisat*)
 let modif_entree () = 
-  let list = readf (open_in "entree.dimacs")
-  in let l = readf (open_in "soluce.txt")
-     in let sol = (List.nth l 1)
-        in let list_finale = list@[(negate_sol sol)] 
-           in create_dimacs list_finale dim
+   let list = readf (open_in "entree.dimacs")
+   in let deb_dimacs = modif_nb_clauses (List.hd list)
+   in let l = readf (open_in "soluce.txt")
+      in let sol = (List.nth l 1)^" 0\n"
+         in let list_finale = (deb_dimacs::(List.tl list))@[(negate_sol sol)] 
+            in modif_dimacs list_finale dim
 ;;
 
 let show_stables () =
@@ -404,10 +429,10 @@ let show_stables () =
           print_string "Il n'existe pas de génération stable pour votre automate !\n";
           restart "Non"
         end 
-       else 
+    else 
       begin 
-        print_string "Fin de recherche de génération stable.\n"; 
-        restart "Non"
+        print_string "Fin de recherche de génération stable.\n";
+        exit(0)
       end 
   in let aux a = 
        ()
