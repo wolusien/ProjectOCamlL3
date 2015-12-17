@@ -389,17 +389,29 @@ let modif_entree () =
 ;;
 
 let show_stables () =
-  let result = Sys.command "minisat entree.dimacs soluce.txt"
-  in let rec restart str = 
-       if(str="Oui") then 
-         if((Sys.command "minisat entree.dimacs soluce.txt")=10) then 
-           print_string "Voici votre génération stable : \n";
-       show_generation (create_gen (tradsol (List.nth (readf (open_in "soluce.txt")) 1)) dim);
-       modif_entree ();
-       print_string "Voulez-vous continuez : \nOui\tNon\n";
-       restart (read_line ())
-     in if(result=10) then restart "Oui"
-       else print_string "Il n'y a pas de génération stables pour votre automate"; restart "Non"
+  let rec restart str = 
+    if(str="Oui") then 
+      if((Sys.command "minisat entree.dimacs soluce.txt")=10) then 
+        begin 
+          print_string "Voici votre génération stable : \n";
+          show_generation (create_gen (tradsol (List.nth (readf (open_in "soluce.txt")) 1)) dim);
+          modif_entree ();
+          print_string "Voulez-vous continuez : \nOui\tNon\n";
+          restart (read_line ())
+        end 
+      else
+        begin
+          print_string "Il n'existe pas de génération stable pour votre automate !\n";
+          restart "Non"
+        end 
+       else 
+      begin 
+        print_string "Fin de recherche de génération stable.\n"; 
+        restart "Non"
+      end 
+  in let aux a = 
+       ()
+     in aux (restart "Oui")       
 ;;
 
 show_stables ();;     
