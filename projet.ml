@@ -278,6 +278,25 @@ let stables auto dim =
       do l := ((fus (tradaux (complementaire auto) dim i j) (tradaux (extract_rules auto 'D') dim i j))::(!l))
       done;
     done; (List.flatten (!l))
+;; 
+
+let dimGrid l = 
+  let rec aux f l1 =
+    match f with
+    |Vrai|Faux -> l1
+    |Var(w)-> 
+      if(not(List.exists (fun x ->(w=x)) l1)) then (w::l1)
+      else l1
+    |Neg(g) -> aux g l1
+    |Ou(a,b) -> aux a (aux b l1)
+    |Et(a,b) -> aux a (aux b l1)
+  in 
+  let rec aux1 l2 l3 =
+    match l2 with
+    |[] -> l3
+    |h::q -> aux1 q (aux h l3)
+  in let listo = aux1 l []
+     in List.length listo
 ;;
 
 (*Translate a formule to string containing number instead of xnum*)  
@@ -298,18 +317,22 @@ let tradmin list_formule =
     in aux2 list_formule []
 ;;
 
+
 (*Generate the dimacs file*)
-let create_dimacs list dim =
-  let n = List.length list 
-  and fd = open_out("entree.dimacs")
-  in let rec aux file_desc l =
-       match l with 
-       |[] -> close_out file_desc
-       |h::q -> output_string file_desc (h^" 0\n"); aux file_desc q 
-     in output_string fd ("p cnf "^string_of_int(dim*dim)^" "^string_of_int(n)^"\n"); aux fd list
+let create_dimacs liste  =
+  let dim = dimGrid liste
+  in let list = tradmin liste
+     in let n = List.length list 
+     and fd = open_out("entree.dimacs")
+        in let rec aux file_desc l =
+             match l with 
+             |[] -> close_out file_desc
+             |h::q -> output_string file_desc (h^" 0\n"); aux file_desc q 
+           in output_string fd ("p cnf "^(string_of_int dim)^" "^(string_of_int n)^"\n"); aux fd list
 ;;
 
-create_dimacs (tradmin (stables auto dim)) dim;;
+
+create_dimacs (stables auto dim);;
 
 (*Convert string with good syntax to list of int*)
 let tradsol sol =
