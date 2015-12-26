@@ -405,8 +405,7 @@ let modif_nb_clauses deb_dimacs =
 
 (*Modif the dimacs file*)
 let modif_dimacs list dim =
-  let n = List.length list 
-  and fd = open_out("entree.dimacs")
+  let fd = open_out("entree.dimacs")
   in let rec aux file_desc l =
        match l with 
        |[] -> close_out file_desc
