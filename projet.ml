@@ -1,3 +1,4 @@
+
 type state = Val of char;;
 
 type generation = state array array;;
@@ -11,6 +12,11 @@ type 'a option = None | Some of 'a;;
 exception IncorrectFile;;
 
 exception SyntaxFile;;
+
+(*_________________________________________________________________________*)
+  (*_____________________I.Initialization__________________________________*)
+(*_________________________________________________________________________*)
+
 
 let file_name = ref ("testgen");; 
 
@@ -96,6 +102,10 @@ let parse fd =
 (list_to_rules l))
 ;;
 
+(*______________________________________________________________________*)
+(*___________________________II.Display________________________________*)
+(*______________________________________________________________________*)
+
 let print state = 
   match state with 
   |Val(a) -> print_char a
@@ -119,6 +129,10 @@ let show_generation tab =
   done;
   print_string "-+\n";
 ;;
+
+(*______________________________________________________________________*)
+(*___________________________III.Simulate________________________________*)
+(*______________________________________________________________________*)
 
 (*Getters for neighbors of a state*)
 let right_cell tab i j =
@@ -165,13 +179,10 @@ let next_generation tab (rules:automaton)  =
   (newtab:generation)
 ;;
 
-let (dim,gen,auto)= parse (open_in (!file_name));;
+(*______________________________________________________________________*)
+(*_______________________IIII.Modeling__________________________________*)
+(*______________________________________________________________________*)
 
-(*contains_rule auto (Val('A'),Val('A'),Val('A'),Val('D'),Val('d'));;*)
-
-(*show_generation gen;;
-
-show_generation (next_generation gen auto);;*)
 
 type formule = Vrai | Faux
                |Var of string
@@ -283,6 +294,10 @@ let stables auto dim =
       done;
     done; (List.flatten (!l))
 ;; 
+
+(*______________________________________________________________________*)
+(*______________________V.Find the stable generation____________________*)
+(*______________________________________________________________________*)
 
 (* Get the number of variable on the grid Ici 49*)
 let dimGrid l = 
