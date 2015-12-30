@@ -1,13 +1,8 @@
 open Automaton;;
 open Program;;
+open Type;;
 open Graphics;;
 
-let (dim,gen,auto)= parse (open_in "testgen");;
-
-
-(*__________________________________________________________*)
-                (*Graphic window*)
-(*__________________________________________________________*)
 
  open_graph " 600x600";; 
 let background_color = (rgb 65 126 190);;
@@ -125,10 +120,5 @@ begin
     inversion1();(fill_grid tabRef dim);a:=(next_generation tabRef auto)
 end;
 next();;
-
-
-
-(*___________________________________________tests____________________*)
-(*____________________________________________________________________*)
 
 next();;

@@ -9,9 +9,9 @@ Groupe: Maths-Info
 Notre soumission contient les fichiers suivants:
 -program.ml
 -automaton.ml
--automaton.mli
 -showGrid.ml
--makefile
+-type.ml
+-Makefile
 
 Pour pouvoir compiler les fichiers il suffira de taper dans le terminal la commande " make "
 la compilation va produire deux fichiers exécutables:
@@ -22,8 +22,7 @@ la génération suivante ainsi que la génération stable
 2--grid: interface graphique qui à son exécution  affiche une grille vide et en cliquant sur les boutons
 // "START" elle affiche la génération initiale
 //"NEXT" va permettre d'afficher l'évolution de cette génération jusqu'à arriver à une génération stable.
-// "STABLE" permet d'aficher directement la génération stable de notre automate.
  
-Pour exécuter les fichiers 'grid' et 'automaton' il faut taper l'une des commandes suivantes dans le terminal: 
-:~ ./automaton
-:~ ./grid
+Pour exécuter les fichiers 'grid' et 'automaton' il faut taper l'une des commandes suivantes dans le terminal suivi du nom du fichier qui contient la génération initiale: 
+:~ ./automaton nom_fichier
+:~ ./grid nom_fichier

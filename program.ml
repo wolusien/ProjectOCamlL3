@@ -1,24 +1,10 @@
+open Type;;
 
-type state = Val of char;;
-
-type generation = state array array;;
-
-type rule = state*state*state*state*state;;
- 
-type automaton = rule array ;;
-
-type 'a option = None | Some of 'a;;
-
-exception IncorrectFile;;
-
-exception SyntaxFile;;
 
 (*_________________________________________________________________________*)
   (*_____________________I.Initialization__________________________________*)
 (*_________________________________________________________________________*)
 
-
-let file_name = ref ("testgen");; 
 
 (*Read file and store it on a list*)
 let readf file_desc = 
@@ -97,11 +83,11 @@ let parse fd =
   in let deb_generation = (get_string_line list "Regles")
   and fin = (get_string_line list "GenerationZero")
      in let l = get_lines list deb_generation fin
-  in ((get_dim list),
-(list_to_generation list),
-(list_to_rules l))
+	in  ((get_dim list),
+	  (list_to_generation list),
+	  (list_to_rules l))
 ;;
-
+let (dim,gen,auto)= parse (open_in (!file_name));;
 (*______________________________________________________________________*)
 (*___________________________II.Display________________________________*)
 (*______________________________________________________________________*)
@@ -182,13 +168,6 @@ let next_generation tab (rules:automaton)  =
 (*______________________________________________________________________*)
 (*_______________________IIII.Modeling__________________________________*)
 (*______________________________________________________________________*)
-
-
-type formule = Vrai | Faux
-               |Var of string
-               |Neg of formule 
-               |Et of formule * formule 
-               |Ou of formule * formule;;
 
 (*Get the number of the case given by line l and column c*)
 let index taille (l,c) = (l)*taille + (c+1);;
@@ -276,7 +255,6 @@ let tradaux (auto:automaton) dim l c =
         in aux2 au []
 ;;
 
-tradaux auto 7 0 0;;
 
 (*Add elements of l2_form to l1_form*)
 let rec fus l1_form l2_form =
@@ -351,8 +329,6 @@ let create_dimacs liste  =
            in output_string fd ("p cnf "^(string_of_int dim)^" "^(string_of_int n)^"\n"); aux fd list
 ;;
 
-
-create_dimacs (stables auto dim);;
 
 (*Convert string with good syntax to list of int*)
 let tradsol sol =
@@ -435,7 +411,7 @@ let modif_dimacs list dim =
 
 (*Update entree.dimacs by adding the rule get by the solution of minisat*)
 let modif_entree () = 
-(*get all lines (first line and nb of clauses) in entree.dimacs"*)
+(*get all lines first line and nb of clauses in entree.dimacs*)
    let list = readf (open_in "entree.dimacs")
      (*get the first line containing the number of clauses and updates it*)
    in let deb_dimacs = modif_nb_clauses (List.hd list)
@@ -479,5 +455,4 @@ let show_stables () =
      in aux (restart "Oui")       
 ;;
 
-(*show_stables ()*);;     
   
