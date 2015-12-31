@@ -24,13 +24,13 @@ let draw_grid () =
   lineto 53 547;
   set_line_width 2;
   let x = ref ((494/dim)+53) in
-  for i=0 to (dim-1) do
+  for i=0 to (dim-2) do
     moveto !x 547;
     lineto !x 53;
     x := !x+(494/dim);
   done;
   x:= (547-(494/dim));
-  for i=0 to (dim-1) do
+  for i=0 to (dim-2) do
     moveto 53 !x;
     lineto 547 !x;
      x := !x-(494/dim);
@@ -106,18 +106,18 @@ let inversion1()=
     done
   done
 ;;
-
+let b= ref (false);;
 let rec next()=
   let e= wait_next_event[Button_down] in 
   let x=e.mouse_x
   and  y=e.mouse_y in
-  if (x>350)&&(x<550)&&(y>10)&&(y<40) then
+  if (x>350)&&(x<550)&&(y>10)&&(y<40)&&(!b=true) then
 begin
     inversion();(fill_grid tabRef dim)
 end;
   if  (x>50)&&(x<250)&&(y>10)&&(y<40) then
 begin
-    inversion1();(fill_grid tabRef dim);a:=(next_generation tabRef auto)
+    inversion1();(fill_grid tabRef dim);a:=(next_generation tabRef auto);b:=true
 end;
 next();;
 
